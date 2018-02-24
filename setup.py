@@ -1,5 +1,4 @@
 # coding=utf-8
-
 ########################################################################################################################
 plugin_identifier = "polarcloud"
 plugin_package = "octoprint_polarcloud"
@@ -38,7 +37,8 @@ plugin_ignored_packages = []
 #     additional_setup_parameters = {"dependency_links": ["https://github.com/someUser/someRepo/archive/master.zip#egg=someDependency-dev"]}
 #"dependency_links": ["https://www.dropbox.com/sh/jz5kduz7v6iuqwv/AAB-2vwh0R1_Bkyf_0YSHtz6a?dl=0"]
 additional_setup_parameters = {
-		"dependency_links": ["https://markwal.github.io/wheels/"]
+		"dependency_links": ["https://markwal.github.io/wheels/"],
+
 	}
 
 ########################################################################################################################
@@ -47,9 +47,41 @@ from setuptools import setup
 
 try:
 	import octoprint_setuptools
+	import subprocess
+	import os
+	print "##################################################################"
+	print "#This command will only work on Raspi. Any other system will fail#"
+	print "##################################################################"
+	command = "sudo apt-get update"
+	temp_p = subprocess.Popen(command,
+							  stdout=subprocess.PIPE,
+							  shell=True
+							  )
+	output, error = temp_p.communicate()
+	p_status = temp_p.wait()
+	print output
+	print error
+	command = "sudo apt install -y libffi-dev"
+	temp_p = subprocess.Popen(command,
+							  stdout=subprocess.PIPE,
+							  shell=True
+							  )
+	output, error = temp_p.communicate()
+	p_status = temp_p.wait()
+	print output
+	print error
+	command = "sudo apt-get install -y libssl-dev"
+	temp_p = subprocess.Popen(command,
+							  stdout=subprocess.PIPE,
+							  shell=True
+							  )
+	output, error = temp_p.communicate()
+	p_status = temp_p.wait()
+	print output
+	print error
 except:
 	print("Could not import OctoPrint's setuptools, are you sure you are running that under "
-	      "the same python installation that OctoPrint is installed under?")
+		  "the same python installation that OctoPrint is installed under?")
 	import sys
 	sys.exit(-1)
 
