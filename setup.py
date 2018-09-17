@@ -3,13 +3,13 @@
 plugin_identifier = "polarcloud"
 plugin_package = "octoprint_polarcloud"
 plugin_name = "OctoPrint-PolarCloud"
-plugin_version = "1.4"
+plugin_version = "1.6"
 plugin_description = """Connects OctoPrint to the PolarCloud so you can easily monitor and control outside of your local network"""
 plugin_author = "Mark Walker"
 plugin_author_email = "markwal@hotmail.com"
 plugin_url = "https://github.com/markwal/OctoPrint-PolarCloud"
 plugin_license = "AGPLv3"
-plugin_requires = ["cffi==1.11.2", "cryptography==2.1.4", "SocketIO-client", "pyopenssl", "Pillow"]
+plugin_requires = ["cffi==1.11.5", "cryptography==2.2.2", "SocketIO-client", "pyopenssl", "Pillow"]
 
 ### --------------------------------------------------------------------------------------------------------------------
 ### More advanced options that you usually shouldn't have to touch follow after this point
