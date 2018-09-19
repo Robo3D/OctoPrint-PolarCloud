@@ -824,7 +824,6 @@ class PolarcloudPlugin(octoprint.plugin.SettingsPlugin,
     				"protocolVersion": "2"
     			}
     		})
-            return
 
 		return True
 
