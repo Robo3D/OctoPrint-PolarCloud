@@ -164,7 +164,7 @@ class PolarcloudPlugin(octoprint.plugin.SettingsPlugin,
 			service="https://printer2.polar3d.com",
 			service_ui="https://polar3d.com",
 			serial=None,
-			printer_type="Cartesian",
+			printer_type="robor2",
 			email="",
 			max_image_size = 150000,
 			verbose=False,
@@ -791,16 +791,41 @@ class PolarcloudPlugin(octoprint.plugin.SettingsPlugin,
 			return False
 
 		self._logger.info("emit register")
-		self._socket.emit("register", {
-			"mfg": "op",
-			"email": email,
-			"pin": pin,
-			"publicKey": self._public_key,
-			"myInfo": {
-				"MAC": get_mac(),
-				"protocolVersion": "2"
-			}
-		})
+        if 'robor2' in self._printer_type:
+            self._socket.emit("register", {
+    			"mfg": "roboc2",
+    			"email": email,
+    			"pin": pin,
+    			"publicKey": self._public_key,
+    			"myInfo": {
+    				"MAC": get_mac(),
+    				"protocolVersion": "2"
+    			}
+    		})
+        elif 'roboc2' in self._printer_type:
+            self._socket.emit("register", {
+    			"mfg": "roboc2",
+    			"email": email,
+    			"pin": pin,
+    			"publicKey": self._public_key,
+    			"myInfo": {
+    				"MAC": get_mac(),
+    				"protocolVersion": "2"
+    			}
+    		})
+        else:
+            self._socket.emit("register", {
+    			"mfg": "op",
+    			"email": email,
+    			"pin": pin,
+    			"publicKey": self._public_key,
+    			"myInfo": {
+    				"MAC": get_mac(),
+    				"protocolVersion": "2"
+    			}
+    		})
+            return
+
 		return True
 
 	#~~ cancel
