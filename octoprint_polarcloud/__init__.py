@@ -144,6 +144,14 @@ class PolarcloudPlugin(octoprint.plugin.SettingsPlugin,
 		self._max_image_size = 150000
 		self._image_transpose = False
 		self._printer_type = None
+        self._printer_types = {
+            'robor1': {'name': 'Robo R1'},
+            'robor2': {'name': 'Robo R2'},
+            'roboc2': {'name': 'Robo C2'}
+        }
+        self._printer_types_js = []
+        for key in self.printer_types:
+            self.printer_types_js.append({'type': key, 'name': self.printer_types[key]['name']})
 		self._disconnect_on_register = False
 		self._hello_sent = False
 		self._port = 80
@@ -165,6 +173,7 @@ class PolarcloudPlugin(octoprint.plugin.SettingsPlugin,
 			service_ui="https://polar3d.com",
 			serial=None,
 			printer_type="robor2",
+            printer_types_json=json.dumps(self.printer_types_js),
 			email="",
 			max_image_size = 150000,
 			verbose=False,
@@ -204,12 +213,12 @@ class PolarcloudPlugin(octoprint.plugin.SettingsPlugin,
 
 				# version check: github repository
 				type="github_release",
-				user="markwal",
+				user="Robo3D",
 				repo="OctoPrint-PolarCloud",
 				current=self._plugin_version,
 
 				# update method: pip
-				pip="https://github.com/markwal/OctoPrint-PolarCloud/archive/{target_version}.zip"
+				pip="https://github.com/robo3d/OctoPrint-PolarCloud/archive/{target_version}.zip"
 			)
 		)
 
@@ -217,6 +226,7 @@ class PolarcloudPlugin(octoprint.plugin.SettingsPlugin,
 
 	def on_startup(self, host, port, *args, **kwargs):
 		self._port = port
+        self._printer_type = self._settings.get(['printer_type'])
 
 	def on_after_startup(self, *args, **kwargs):
 		if self._settings.get(['verbose']):
@@ -791,24 +801,7 @@ class PolarcloudPlugin(octoprint.plugin.SettingsPlugin,
 			return False
 
 		self._logger.info("emit register")
-        model = settings.get(['Model'])
-
-        if model == None:
-            #detirmine model
-            printer_type = settings.global_get(['printerProfiles', 'defaultProfile'])
-
-            if 'model' in printer_type:
-                if printer_type['model'] != 'Robo C2' and printer_type['model'] != 'Robo R2':
-                    model = 'Robo C2'
-                else:
-                    model = printer_type['model']
-
-            else:
-                model = "Robo C2"
-
-        if model == "Robo R2":
-            settings.set(['Configuration', 'Model'], model)
-            settings.save()
+        if 'robor2' in self._printer_type:
             self._socket.emit("register", {
     			"mfg": "robor2",
     			"email": email,
@@ -819,21 +812,6 @@ class PolarcloudPlugin(octoprint.plugin.SettingsPlugin,
     				"protocolVersion": "2"
     			}
     		})
-
-        elif model == "Robo C2":
-            settings.set(['Configuration', 'Model'], model)
-            settings.save()
-            self._socket.emit("register", {
-    			"mfg": "roboc2",
-    			"email": email,
-    			"pin": pin,
-    			"publicKey": self._public_key,
-    			"myInfo": {
-    				"MAC": get_mac(),
-    				"protocolVersion": "2"
-    			}
-    		})
-
         elif 'roboc2' in self._printer_type:
             self._socket.emit("register", {
     			"mfg": "roboc2",
@@ -856,7 +834,6 @@ class PolarcloudPlugin(octoprint.plugin.SettingsPlugin,
     				"protocolVersion": "2"
     			}
     		})
-
 		return True
 
 	#~~ cancel
@@ -1224,7 +1201,8 @@ class PolarcloudPlugin(octoprint.plugin.SettingsPlugin,
 
 	def get_api_commands(self, *args, **kwargs):
 		return dict(
-			register=[]
+			register=['printer_type'],
+            unregister=[]
 		)
 
 	def is_api_adminonly(self, *args, **kwargs):

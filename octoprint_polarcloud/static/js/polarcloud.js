@@ -41,16 +41,10 @@ $(function() {
         self.onBeforeBinding = function() {
             self.settings = self.settingsViewModel.settings.plugins.polarcloud;
             self._ensureCurrentPrinterType();
+            self.printerTypes(JSON.parse(self.settings.printer_types_json()));
         };
 
         self.onSettingsShown = function() {
-            $.ajax(self.settings.service_ui() + "/api/v1/printer_makes", { headers: "" })
-                .done(function(response) {
-                    if ("printerMakes" in response) {
-                        self.printerTypes(response["printerMakes"]);
-                        self._ensureCurrentPrinterType();
-                    }
-                });
             self.nextPrintAvailable(false);
             OctoPrint.simpleApiGet("polarcloud")
                 .done(function(response) {
