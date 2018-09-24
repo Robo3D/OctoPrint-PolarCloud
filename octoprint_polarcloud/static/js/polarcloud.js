@@ -41,7 +41,7 @@ $(function() {
         self.onBeforeBinding = function() {
             self.settings = self.settingsViewModel.settings.plugins.polarcloud;
             self._ensureCurrentPrinterType();
-            self.printerTypes(JSON.parse(self.settings.printer_types_json()));
+            self.printerTypes(JSON.parse(self.settings._printer_types_json()));
         };
 
         self.onSettingsShown = function() {
