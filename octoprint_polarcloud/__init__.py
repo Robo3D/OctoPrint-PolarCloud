@@ -149,9 +149,6 @@ class PolarcloudPlugin(octoprint.plugin.SettingsPlugin,
             'robor2': {'name': 'Robo R2'},
             'roboc2': {'name': 'Robo C2'}
         }
-        self._printer_types_js = []
-        for key in self._printer_types:
-            self._printer_types_js.append({'type': key, 'name': self.printer_types[key]['name']})
 		self._disconnect_on_register = False
 		self._hello_sent = False
 		self._port = 80
@@ -173,7 +170,6 @@ class PolarcloudPlugin(octoprint.plugin.SettingsPlugin,
 			service_ui="https://polar3d.com",
 			serial=None,
 			printer_type="robor2",
-            printer_types_json=json.dumps(self._printer_types_js),
 			email="",
 			max_image_size = 150000,
 			verbose=False,
