@@ -791,7 +791,38 @@ class PolarcloudPlugin(octoprint.plugin.SettingsPlugin,
 			return False
 
 		self._logger.info("emit register")
-        if 'robor2' in self._printer_type:
+        model = settings.get(['Model'])
+
+        if model == None:
+            #detirmine model
+            printer_type = settings.global_get(['printerProfiles', 'defaultProfile'])
+
+            if 'model' in printer_type:
+                if printer_type['model'] != 'Robo C2' and printer_type['model'] != 'Robo R2':
+                    model = 'Robo C2'
+                else:
+                    model = printer_type['model']
+
+            else:
+                model = "Robo C2"
+
+        if model == "Robo R2":
+            settings.set(['Configuration', 'Model'], model)
+            settings.save()
+            self._socket.emit("register", {
+    			"mfg": "robor2",
+    			"email": email,
+    			"pin": pin,
+    			"publicKey": self._public_key,
+    			"myInfo": {
+    				"MAC": get_mac(),
+    				"protocolVersion": "2"
+    			}
+    		})
+
+        elif model == "Robo C2":
+            settings.set(['Configuration', 'Model'], model)
+            settings.save()
             self._socket.emit("register", {
     			"mfg": "roboc2",
     			"email": email,
@@ -802,6 +833,7 @@ class PolarcloudPlugin(octoprint.plugin.SettingsPlugin,
     				"protocolVersion": "2"
     			}
     		})
+
         elif 'roboc2' in self._printer_type:
             self._socket.emit("register", {
     			"mfg": "roboc2",
